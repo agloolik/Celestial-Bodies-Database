@@ -22,7 +22,7 @@ CREATE TABLE planet (
   planet_type INTEGER REFERENCES planet_type(planet_type_id), 
   star_id INTEGER REFERENCES star(star_id)
 ) ;
-
+INSERT INTO galaxy(name, magnitude,naked_eye, notes) VALUES('Milky Way', -20.9, true, 'The Milky Way is the galaxy that includes the Solar System, with the name describing the galaxy''s appearance from Earth: a hazy band of light seen in the night sky formed from stars that cannot be individually distinguished by the naked eye.');
 INSERT INTO planet(
   name, 
   description, 
@@ -34,4 +34,11 @@ INSERT INTO planet(
   planet_type,
   star_id)
 VALUES
-( )
+('Mercury', 
+'Mercury is the closest planet to the Sun but, perhaps surprisingly, it does not have the highest temperatures. It is the second densest planet of the Solar System, but also the smallest planet. The structure of Mercury makes it the most similar planet to Earth.',
+ false,
+ 427,
+ -173,
+ 0.39,
+ 0,
+ 1, )
