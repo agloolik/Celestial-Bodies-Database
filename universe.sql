@@ -52,6 +52,7 @@ CREATE TABLE public.galaxy (
     name character varying(80) NOT NULL,
     magnitude numeric(6,2),
     naked_eye boolean,
+    galaxy_type_id integer,
     notes text
 );
 
@@ -81,6 +82,41 @@ ALTER SEQUENCE public.galaxy_galaxy_id_seq OWNED BY public.galaxy.galaxy_id;
 
 
 --
+-- Name: galaxy_type; Type: TABLE; Schema: public; Owner: freecodecamp
+--
+
+CREATE TABLE public.galaxy_type (
+    galaxy_type_id integer NOT NULL,
+    name character varying(50) NOT NULL,
+    description text NOT NULL
+);
+
+
+ALTER TABLE public.galaxy_type OWNER TO freecodecamp;
+
+--
+-- Name: galaxy_type_galaxy_type_id_seq; Type: SEQUENCE; Schema: public; Owner: freecodecamp
+--
+
+CREATE SEQUENCE public.galaxy_type_galaxy_type_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.galaxy_type_galaxy_type_id_seq OWNER TO freecodecamp;
+
+--
+-- Name: galaxy_type_galaxy_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: freecodecamp
+--
+
+ALTER SEQUENCE public.galaxy_type_galaxy_type_id_seq OWNED BY public.galaxy_type.galaxy_type_id;
+
+
+--
 -- Name: planet; Type: TABLE; Schema: public; Owner: freecodecamp
 --
 
@@ -93,6 +129,7 @@ CREATE TABLE public.planet (
     min_temp_celcius numeric(6,3),
     distance_to_sun_au numeric(6,3),
     number_of_moons integer,
+    number_of_rings integer,
     planet_type integer,
     star_id integer
 );
@@ -158,20 +195,6 @@ ALTER SEQUENCE public.planet_type_planet_type_id_seq OWNED BY public.planet_type
 
 
 --
--- Name: star; Type: TABLE; Schema: public; Owner: freecodecamp
---
-
-CREATE TABLE public.star (
-    star_id integer NOT NULL,
-    name character varying(80) NOT NULL,
-    classification character varying(6),
-    galaxy_id integer NOT NULL
-);
-
-
-ALTER TABLE public.star OWNER TO freecodecamp;
-
---
 -- Name: star_star_id_seq; Type: SEQUENCE; Schema: public; Owner: freecodecamp
 --
 
@@ -187,17 +210,17 @@ CREATE SEQUENCE public.star_star_id_seq
 ALTER TABLE public.star_star_id_seq OWNER TO freecodecamp;
 
 --
--- Name: star_star_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: freecodecamp
---
-
-ALTER SEQUENCE public.star_star_id_seq OWNED BY public.star.star_id;
-
-
---
 -- Name: galaxy galaxy_id; Type: DEFAULT; Schema: public; Owner: freecodecamp
 --
 
 ALTER TABLE ONLY public.galaxy ALTER COLUMN galaxy_id SET DEFAULT nextval('public.galaxy_galaxy_id_seq'::regclass);
+
+
+--
+-- Name: galaxy_type galaxy_type_id; Type: DEFAULT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.galaxy_type ALTER COLUMN galaxy_type_id SET DEFAULT nextval('public.galaxy_type_galaxy_type_id_seq'::regclass);
 
 
 --
@@ -215,17 +238,24 @@ ALTER TABLE ONLY public.planet_type ALTER COLUMN planet_type_id SET DEFAULT next
 
 
 --
--- Name: star star_id; Type: DEFAULT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.star ALTER COLUMN star_id SET DEFAULT nextval('public.star_star_id_seq'::regclass);
-
-
---
 -- Data for Name: galaxy; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.galaxy VALUES (1, 'Milky Way', -20.90, true, 'The Milky Way is the galaxy that includes the Solar System, with the name describing the galaxy''s appearance from Earth: a hazy band of light seen in the night sky formed from stars that cannot be individually distinguished by the naked eye.');
+INSERT INTO public.galaxy VALUES (1, 'Milky Way', -20.90, true, 3, 'The Milky Way is the galaxy that includes the Solar System, with the name describing the galaxy''s appearance from Earth: a hazy band of light seen in the night sky formed from stars that cannot be individually distinguished by the naked eye.');
+
+
+--
+-- Data for Name: galaxy_type; Type: TABLE DATA; Schema: public; Owner: freecodecamp
+--
+
+INSERT INTO public.galaxy_type VALUES (1, 'Elliptical (E)', 'Smooth, featureless, and roughly spherical or elliptical. Classified from E0 (nearly spherical) to E7 (highly elongated). Contain older stars, little gas and dust, and minimal star formation.');
+INSERT INTO public.galaxy_type VALUES (2, 'Spiral (S)', 'Have a central bulge surrounded by spiral arms. Contain a mix of old and young stars, gas, and dust for star formation. Subtypes: Sa (tightly wound), Sb (moderate arms), Sc (loosely wound).');
+INSERT INTO public.galaxy_type VALUES (3, 'Barred Spiral (SB)', 'Similar to spiral galaxies but with a central bar structure. Subtypes: SBa (tightly wound), SBb (moderate arms), SBc (loosely wound).');
+INSERT INTO public.galaxy_type VALUES (4, 'Lenticular (S0)', 'Transitional type between elliptical and spiral galaxies. Has a central bulge and disk but lacks prominent spiral arms. Contains older stars and little star formation.');
+INSERT INTO public.galaxy_type VALUES (5, 'Irregular (I)', 'No defined shape or structure. Often chaotic due to interactions with other galaxies. Contains young stars, gas, and dust, with active star formation.');
+INSERT INTO public.galaxy_type VALUES (6, 'Dwarf', 'Small, faint galaxies that can be elliptical, irregular, or even tiny spirals.');
+INSERT INTO public.galaxy_type VALUES (7, 'Peculiar', 'Unusual shapes due to interactions or mergers.');
+INSERT INTO public.galaxy_type VALUES (8, 'Active', 'Galaxies with extremely energetic cores, such as quasars, Seyfert galaxies, and radio galaxies.');
 
 
 --
@@ -244,16 +274,17 @@ INSERT INTO public.planet_type VALUES (3, 'Ice giants', 'These are planets that 
 
 
 --
--- Data for Name: star; Type: TABLE DATA; Schema: public; Owner: freecodecamp
---
-
-
-
---
 -- Name: galaxy_galaxy_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
 --
 
-SELECT pg_catalog.setval('public.galaxy_galaxy_id_seq', 1, true);
+SELECT pg_catalog.setval('public.galaxy_galaxy_id_seq', 1, false);
+
+
+--
+-- Name: galaxy_type_galaxy_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
+--
+
+SELECT pg_catalog.setval('public.galaxy_type_galaxy_type_id_seq', 8, true);
 
 
 --
@@ -278,19 +309,27 @@ SELECT pg_catalog.setval('public.star_star_id_seq', 1, false);
 
 
 --
--- Name: galaxy galaxy_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.galaxy
-    ADD CONSTRAINT galaxy_name_key UNIQUE (name);
-
-
---
 -- Name: galaxy galaxy_pkey; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
 ALTER TABLE ONLY public.galaxy
     ADD CONSTRAINT galaxy_pkey PRIMARY KEY (galaxy_id);
+
+
+--
+-- Name: galaxy_type galaxy_type_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.galaxy_type
+    ADD CONSTRAINT galaxy_type_name_key UNIQUE (name);
+
+
+--
+-- Name: galaxy_type galaxy_type_pkey; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.galaxy_type
+    ADD CONSTRAINT galaxy_type_pkey PRIMARY KEY (galaxy_type_id);
 
 
 --
@@ -326,43 +365,11 @@ ALTER TABLE ONLY public.planet_type
 
 
 --
--- Name: star star_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.star
-    ADD CONSTRAINT star_name_key UNIQUE (name);
-
-
---
--- Name: star star_pkey; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.star
-    ADD CONSTRAINT star_pkey PRIMARY KEY (star_id);
-
-
---
 -- Name: planet planet_planet_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
 ALTER TABLE ONLY public.planet
     ADD CONSTRAINT planet_planet_type_fkey FOREIGN KEY (planet_type) REFERENCES public.planet_type(planet_type_id);
-
-
---
--- Name: planet planet_star_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.planet
-    ADD CONSTRAINT planet_star_id_fkey FOREIGN KEY (star_id) REFERENCES public.star(star_id);
-
-
---
--- Name: star star_galaxy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.star
-    ADD CONSTRAINT star_galaxy_id_fkey FOREIGN KEY (galaxy_id) REFERENCES public.galaxy(galaxy_id);
 
 
 --
